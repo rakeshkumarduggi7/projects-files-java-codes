@@ -1,0 +1,284 @@
+package com.tictactoe.game;
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+public class tictactoe extends ApplicationAdapter {
+	SpriteBatch batch;
+	Texture img;
+	Texture xttt;
+	Texture ottt;
+	Texture ulost;
+	Texture youwin;
+	OrthographicCamera camera=new OrthographicCamera();
+	Viewport vp;
+	int x = 0;
+	float cooldown=0f;
+	int y = -300;
+	int p=0;
+	ArrayList<int[]> al;
+	ArrayList<int[]> oal;
+	ArrayList<int[]>  all;
+	int[][] m=new int[3][3];
+	boolean win=false;
+	long st;
+	boolean ob=false;
+Random r;
+	@Override
+	public void create () {
+		batch = new SpriteBatch();
+		img = new Texture("ttt.png");
+		xttt=new Texture("xttt.png");
+		ulost=new Texture("youlost.png");
+		ottt=new Texture("ottt.png");
+		youwin=new Texture("youwin.png");
+		camera.setToOrtho(false,600, 600);
+		vp=new FitViewport(600,600,camera);
+		al=new ArrayList<>();
+		oal=new ArrayList<>();
+		all=new ArrayList<>();
+		all.add(new int[]{0,0});
+		all.add(new int[]{0,200});
+		all.add(new int[]{0,400});
+		all.add(new int[]{200,0});
+		all.add(new int[]{200,200});
+		all.add(new int[]{200,400});
+		all.add(new int[]{400,0});
+		all.add(new int[]{400,200});
+		all.add(new int[]{400,400});	r=new Random( );
+	}
+	public void resize(int w,int h){
+		vp.update(w,h);
+	}
+	@Override
+	public void render () {
+		if (cooldown>0) {
+			cooldown -=Gdx.graphics.getDeltaTime();
+		}
+		vp.apply();
+		ScreenUtils.clear(0, 0, 0, 1);
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+		batch.draw(img, 0, 0);
+		for (int[] a:al) {
+			batch.draw(xttt, a[0], a[1]);
+		}
+		for (int[] b:oal){
+			batch.draw(ottt,b[0],b[1]);
+		}
+		if(al.size()>=3 ){
+			int[] cu= conv(al.get(al.size()-1));
+			if(cw(cu[0],cu[1],m,1)){
+				win=true;
+batch.draw(youwin,50,150);
+			}
+		}
+		if(oal.size()>=3){
+			int[] o=conv(oal.get(oal.size()-1));
+			if(cw(o[0],o[1],m,-1)){
+				batch.draw(ulost,50,150);
+			}
+		}
+		batch.end();
+
+		if (!win&&Gdx.input.isTouched()&&cooldown<=0) {
+			Vector3 cr = vp.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+			if (cr.x > 0 && cr.x < 200) {
+				if (cr.y > 0 && cr.y < 200) {
+					x = 0;
+					y = 0;
+					if (!al.contains(new int[]{0, 0}) && !oal.contains(new int[]{0, 0})) {
+						al.add(new int[]{0, 0});
+						all.remove(new int[]{0, 0});
+						m[2][0] = 1;
+					}
+				} else if (cr.y > 200 && cr.y < 400) {
+					x = 0;
+					y = 200;
+					if (!al.contains(new int[]{0, 200}) && !oal.contains(new int[]{0, 200})) {
+						al.add(new int[]{0, 200});
+						all.remove(new int[]{0, 200});
+						m[1][0] = 1;
+					}
+				} else if (cr.y > 400 && cr.y < 600) {
+					x = 0;
+					y = 400;
+					if (!al.contains(new int[]{0, 400}) && !oal.contains(new int[]{0, 400})) {
+						al.add(new int[]{0, 400});
+						all.remove(new int[]{0, 400});
+						m[0][0] = 1;
+					}
+				}
+			} else if (cr.x > 200 && cr.x < 400) {
+				if (cr.y > 0 && cr.y < 200) {
+					x = 200;
+					y = 0;
+					if (!al.contains(new int[]{200, 0}) && !oal.contains(new int[]{200, 0})) {
+						al.add(new int[]{200, 0});
+						all.remove(new int[]{200, 0});
+						m[2][1] = 1;
+					}
+				} else if (cr.y > 200 && cr.y < 400) {
+					x = 200;
+					y = 200;
+					if (!al.contains(new int[]{200, 200}) && !oal.contains(new int[]{200, 200})) {
+						al.add(new int[]{200, 200});
+						all.remove(new int[]{200, 200});
+						m[1][1] = 1;
+					}
+				} else if (cr.y > 400 && cr.y < 600) {
+					x = 200;
+					y = 400;
+					if (!al.contains(new int[]{200, 400}) && !oal.contains(new int[]{200, 400})) {
+						al.add(new int[]{200, 400});
+						all.remove(new int[]{200, 400});
+						m[0][1] = 1;
+					}
+				}
+			} else if (cr.x > 400) {
+				if (cr.y > 0 && cr.y < 200) {
+					x = 400;
+					y = 0;
+					if (!al.contains(new int[]{400, 0}) && !oal.contains(new int[]{400, 0})) {
+						al.add(new int[]{400, 0});
+						all.remove(new int[]{400, 0});
+						m[2][2] = 1;
+					}
+				} else if (cr.y > 200 && cr.y < 400) {
+					x = 400;
+					y = 200;
+					if (!al.contains(new int[]{400, 200}) && !oal.contains(new int[]{400, 200})) {
+						al.add(new int[]{400, 200});
+						all.remove(new int[]{400, 200});
+						m[1][2] = 1;
+					}
+				} else if (cr.y > 400 && cr.y < 600) {
+					x = 400;
+					y = 400;
+					if (!al.contains(new int[]{400, 400}) && !oal.contains(new int[]{400, 400})) {
+						al.add(new int[]{400, 400});
+						all.remove(new int[]{400, 400});
+						m[0][2] = 1;
+					}
+				}
+			}cooldown=1;
+				ob=true;
+		}
+		if(ob){
+		if (all.size() != 0) {
+			int ran = r.nextInt(all.size());
+			if(!al.contains(all.get(ran)) && !oal.contains(all.get(ran))) {
+				int[] oc=conv(all.get(ran));
+				if(m[oc[0]][oc[1]]==0){
+					m[oc[0]][oc[1]]=-1;
+					oal.add(all.get(ran));
+					all.remove(ran);}
+			}
+			ob=false;
+
+		}}
+		 if(win&&p==0) {
+			st= TimeUtils.millis();
+ p=1;
+		}
+	 if(p==1){
+		 long et=(TimeUtils.millis()-st)/1000;
+		 if(et>5){
+			 al.clear();
+			 oal.clear();
+			 all.clear();
+			 m=new int[3][3];
+			 p=0;
+			 win=false;
+		 }
+	 }
+
+	}
+
+	private boolean cw(int x, int y, int[][] m,int n) {
+		if (x==0){
+			if( m[x + 1][y] == n && m[x + 2][y] == n)return true;
+		}
+		else if(x==2){
+			if( m[x - 1][y] == n && m[x - 2][y] == n)return true;
+		}
+		else if(x==1){
+			if(m[x-1][y]==n&&m[x+1][y]==n)return true;
+		}
+		if (y==0){
+			if( m[x][y+1] == n && m[x][y+2] == n)return true;
+		}
+		else if(y==2){
+			if( m[x][y-1] == n && m[x ][y-2] == n)return true;
+		}
+		else if(y==1){
+			if(m[x][y+1]==n&&m[x][y-1]==n)return true;
+		}
+		if(x==0&&y==0) {
+			if (m[x + 1][y + 1] == n && m[x + 2][y + 2] == n) return true;
+		}
+			else if (x==2&&y==2) {
+				if(m[x-1][y-1]==n&&m[x-2][y-2]==n)return true;
+			}
+			else if(x==0&&y==2){
+				if(m[x+1][y-1]==n&&m[x+2][y-2]==n)return true;
+		}
+			else if(x==2&&y==0){
+			if(m[x-1][y+1]==n&&m[x-2][y+2]==n)return true;
+		}
+			else if(x==1&&y==1){
+				if(m[x-1][y-1]==n&&m[x+1][y+1]==n)return true;
+				if (m[x+1][y-1]==n&&m[x-1][y+1]==n)return true;
+		}
+		return false;
+	}
+
+	private int[] conv(int[] ints) {
+if(ints[0]==0 && ints[1]==0 ){
+	return new int[]{2,0};
+		}
+		else if(ints[0]==0 && ints[1]== 200){
+			return new int[]{1,0};
+		}
+		else if(ints[0]==0 && ints[1]==400 ){
+			return new int[]{0,0};
+		}
+		else if(ints[0]==200 && ints[1]==0 ){
+			return new int[]{2,1};
+		}
+		else if(ints[0]==200 && ints[1]==200 ){
+			return new int[]{1,1};
+		}
+		else if(ints[0]==200 && ints[1]==400 ){
+			return new int[]{0,1};
+		}
+		else if(ints[0]==400 && ints[1]==0 ){
+			return new int[]{2,2};
+		}
+		else if(ints[0]==400 && ints[1]==200 ){
+			return new int[]{1,2};
+		}
+		else if(ints[0]==400 && ints[1]==400 ){
+			return new int[]{0,2};
+		}
+return new int[]{0,0};
+	}
+
+	@Override
+	public void dispose () {
+		batch.dispose();
+		img.dispose();
+		xttt.dispose();
+		ottt.dispose();
+	}
+}

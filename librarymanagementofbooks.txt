@@ -1,0 +1,78 @@
+ 
+
+import java.sql.*;
+import java.util.Scanner;
+public class javarevision{
+    public static void main(String[] args) throws SQLException {
+        String url = "jdbc:mysql://127.0.0.1:3306/x", user = "root", pw = "0000";
+        Connection c = DriverManager.getConnection(url, user, pw);
+        Statement st = c.createStatement();
+
+        Scanner sc = new Scanner(System.in);
+        ResultSet rs;
+        //booksi(bbokname varchar(20),studentname varchar(20),rollno int)
+        //boooks name ,total ,presesnt
+        //students name ,rollno
+        while(true){
+            System.out.println("1)add  2)issue  3)return  4)track  5) exit");
+            int cs=sc.nextInt();
+            sc.nextLine();
+            if(cs==1){
+                System.out.println("enter book name:");
+                String bn=sc.nextLine();
+                System.out.println("enter total count:");
+                int tc=sc.nextInt();
+                sc.nextLine();
+                st.execute("select count(*) from books where name='"+bn+"';");
+                  rs= st.getResultSet();
+                rs.next();
+                if(rs.getInt("count(*)")==0){
+                    st.execute("insert into books values('"+bn+"',"+tc+","+tc+");");
+                }
+                else {
+                    st.execute("update books set total=total+"+tc+",present =present+"+tc+" where name ='"+bn+"';");
+                }
+            } else if (cs==2) {
+                System.out.println("enter book name: ");
+                String bn =sc.nextLine();
+                System.out.println("enter student name: ");
+                String sn=sc.nextLine();
+                System.out.println("enter student rollno: ");
+                int sr=sc.nextInt();
+                sc.nextLine();
+                st.execute("insert into booksi values('"+bn+"','"+sn+"',"+sr+");");
+                st.execute("update books set present=present-1 where name='"+bn+"';");
+                System.out.println("successfully registered");
+            }
+            else if(cs==3){
+                while (true){
+                System.out.println("enter book name :");
+                String bn=sc.nextLine();
+                System.out.println("enter rollno :");
+                int rn=sc.nextInt();
+                sc.nextLine();
+                st.execute("delete from booksi where bbokname='"+bn+"' and rollno="+rn+";");
+                st.execute("update books set present =present+1 where name ='"+bn+"'");
+                    System.out.println("1)collect another book  2)exit");
+
+                    if(sc.nextInt()==2){
+                        sc.nextLine();
+                        break;
+                    }
+                    sc.nextLine();
+                }
+            }
+            else if(cs==4){
+                st.execute("select * from booksi");
+rs=st.getResultSet();
+while (rs.next()){
+    System.out.println(rs.getString("bbokname")+" "+rs.getString("studentname")+" "+rs.getInt("rollno"));
+}
+                System.out.println("finished");
+            }
+            else if(cs==5){
+                break;
+            }
+        }
+    }
+}

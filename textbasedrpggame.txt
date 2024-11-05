@@ -1,0 +1,110 @@
+package com.textbasedrpg.game;
+
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+
+import java.security.Key;
+import java.util.Scanner;
+
+public class textbasedrpg extends ApplicationAdapter {
+	SpriteBatch batch;
+	Texture img;
+	Viewport vp;
+	OrthographicCamera camera;
+	BitmapFont bmf;
+	String[] statements;
+	int x=1;
+    long cooldown=1;
+    long tc = 0;
+int sn=0;
+String lug;
+Vector3 tp;
+	@Override
+	public void create () {
+		batch = new SpriteBatch();
+		img = new Texture("badlogic.jpg");
+		camera=new OrthographicCamera( );
+camera.setToOrtho(false,1280,720);
+	//	vp=new FitViewport(1280,720,camera);
+		bmf=new BitmapFont(Gdx.files.internal("fren.fnt"));
+		bmf.setColor(Color.GOLD);
+		statements= new String[]{"you entered a hotel room for 2days stay till you can the ticket back to leave"
+				,"you check out the room and after some time you open ur luggage and unpack your belongings for the stay",
+		"you noticed the telescope you are carrying and after dinner you try going to sleep Zzzzzzzz!!"
+		,"you sleep for 5 hours and you wake up at 2 AM and now u feel too energetic to lie down and go to sleep"
+		,"so you just took a chair and sat near the window where fresh air breezing you notice apartment room across your hotel",
+        "you used the telescope to peek at the apartment and search for anything interesting and yu observe a couple in one room having a fight....."};
+
+        tp=new Vector3();
+        tp.set(-10, -10, 0);
+          lug="luggage :";
+    }
+public void resize(int w,int h){
+	//	vp.update(w,h);
+}
+	@Override
+	public void render () {
+	//	vp.apply();
+		ScreenUtils.clear(0, 0, 0, 1);
+batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+	bmf.draw(batch, statements[sn].substring(0,x), camera.position.x - (camera.viewportWidth) / 2, camera.viewportHeight, 1280, -1, true);
+
+        if(tp.x>0&&tp.y<150){
+            bmf.draw(batch,lug,0,150);
+
+        }else {
+            bmf.draw(batch,"luggage",0,  150);
+        }
+			batch.end();
+			if(x<statements[sn].length()){
+				x++;
+			}
+	 if (sn<4&&Gdx.input.isKeyPressed(Input.Keys.ENTER)&&cooldown>=1){
+		 x=0;
+         if(sn<statements.length-2){
+sn++;
+         }
+         tc= TimeUtils.millis()/1000;
+         cooldown=0;
+	 }
+     if(cooldown<1){
+         cooldown+=TimeUtils.millis()/1000-tc;
+     }
+     if(sn==2){
+         lug="luggage : 1)telescope";
+     }
+     if(sn==statements.length-2) {
+            if (tp.x > 0 && tp.y < 150) {
+                if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) {
+                    x=0;
+sn++;
+                }
+
+            }
+        }
+
+        if(Gdx.input.isTouched()){
+
+            tp.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(tp);
+        }
+	}
+	
+	@Override
+	public void dispose () {
+		batch.dispose();
+		img.dispose();
+	}
+}
