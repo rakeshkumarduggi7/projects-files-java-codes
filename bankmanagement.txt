@@ -1,0 +1,128 @@
+ import java.util.HashMap;
+import java.util.Scanner;
+public class javarevision {
+    public static void main(String[] args) {
+        HashMap<Integer,String> login=new HashMap<>();
+        HashMap<Integer,Integer> acc=new HashMap<>();
+        HashMap<Integer, String > th=new HashMap<>();
+        Scanner s=new Scanner(System.in);
+        System.out.println("Hello, welcome to bank portal :");
+        System.out.println("Choose an option");
+        while (true) {
+            System.out.println("1)Draw money 2)deposit money 3) Transaction History 4)create account  5)exit");
+            int ch = s.nextInt();
+            s.nextLine();
+            if (ch==5){
+            System.out.println("Thank YOU!");
+            break;
+}
+else if(ch==1){
+    while (true){
+    System.out.println("Enter Account no: ");
+    int an=s.nextInt();
+    if(login.containsKey(an)){
+        while(true){
+        System.out.println("Enter password: ");
+        String pw=s.next();
+        if (login.get(an).equals(pw)){
+            while(true){
+            System.out.println("Enter amount to  withdraw");
+            int am=s.nextInt();
+            s.nextLine();
+            if(acc.get(an)<am){
+                System.out.println("acc balance amt less than withrawl amount!");
+            }else {
+                acc.put(an,acc.get(an)-am);
+                String h=th.get(an) ;
+                th.put(an,h+"\n"+"deducted amount of :"+am);
+                System.out.println("amount withdraw successful!");
+                break;
+            }
+            } break;
+        }else {
+            System.out.println("wrong password,press 1)try again! 2)exit");
+            int c=s.nextInt();
+            s.nextLine();
+            if(c==2)break;
+        }
+        }
+    }else {
+        System.out.println("acc no doesn't exist,press 1) check the acc no again and enter. or press 2) to exit");
+        int c=s.nextInt();
+        s.nextLine();
+        if(c==2)break;
+    }
+        System.out.println("1) withdraw again 2) exit");
+    int x=s.nextInt();
+    if(x==2)break;
+
+    }
+}else if(ch==2){
+                while (true){
+                    System.out.println("Enter Account no: ");
+                    int an=s.nextInt();
+                    if(login.containsKey(an)){
+                        while(true){
+                            System.out.println("Enter password: ");
+                            String pw=s.next();
+                            if (login.get(an).equals(pw)){
+                                while(true){
+                                    System.out.println("Enter amount to  deposit");
+                                    int am=s.nextInt();
+                                    s.nextLine();
+                                        acc.put(an,acc.get(an)+am);
+                                        String h=th.get(an) ;
+                                        th.put(an,h+"\n"+"deposit amount of :"+am);
+                                        System.out.println("amount deposit successful!");
+                                        break;
+                                } break;
+                            }else {
+                                System.out.println("wrong password,press 1)try again! 2)exit");
+                                int c=s.nextInt();
+                                s.nextLine();
+                                if(c==2)break;
+                            }
+                        }
+                    }else {
+                        System.out.println("acc no doesn't exist,press 1) check the acc no again and enter. or press 2) to exit");
+                        int c=s.nextInt();
+                        s.nextLine();
+                        if(c==2)break;
+                    }
+                    System.out.println("1) deposit again 2) exit");
+                    int x=s.nextInt();
+                    if(x==2)break;
+
+                }
+}else if(ch==3){
+                System.out.println("enter acc no:");
+                int an=s.nextInt();
+                s.nextLine();
+                System.out.println(th.get(an));
+                System.out.println(acc.get(an));
+
+}else if(ch==4){
+    System.out.println("deposition of 1000 needed to create an acc");
+while (true){
+    System.out.println("enter a accno");
+    int an=s.nextInt();
+    s.nextLine();
+    if(!login.containsKey(an)){
+        System.out.println("enter a password");
+        String pw=s.nextLine();
+        login.put(an,pw);
+        acc.put(an,1000);
+        th.put(an, "deposit of 1000");
+        System.out.println("created successfully");
+        break;
+    }
+    else {
+        System.out.println("acc no  is already in use try another");
+    }
+}
+}
+
+        }
+    }
+
+}
